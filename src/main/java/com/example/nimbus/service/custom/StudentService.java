@@ -9,5 +9,6 @@ public interface StudentService extends SuperService {
     ArrayList<StudentDto> getAllStudent() throws Exception;
     StudentDto getStudentById(int id) throws Exception;
     StudentDto AddStudent(StudentDto studentDto) throws Exception;
-    int updateStudent(StudentDto studentDto) throws Exception;
+    StudentDto updateStudent(StudentDto studentDto) throws Exception;
+    String deleteStudent(int id) throws Exception;
 }

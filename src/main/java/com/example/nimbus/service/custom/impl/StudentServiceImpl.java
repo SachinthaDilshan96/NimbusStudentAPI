@@ -73,7 +73,29 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public int updateStudent(StudentDto studentDto) throws Exception {
-        return 0;
+    public StudentDto updateStudent(StudentDto studentDto) throws Exception {
+        StudentEntity studentEntity = new StudentEntity(
+                studentDto.getStudentId(),
+                studentDto.getFirstName(),
+                studentDto.getLastName(),
+                studentDto.getBirthDay(),
+                new DepartmentEntity(studentDto.getDepartment().getId(),studentDto.getDepartment().getDepartmentName()));
+        StudentEntity result = studentDao.save(studentEntity);
+        if (result!=null){
+            return new StudentDto(
+                    result.getStudentId(),
+                    result.getFirstName(),
+                    result.getLastName(),
+                    result.getBirthDay(),
+                    new DepartmentDto(result.getDepartment().getId(),result.getDepartment().getDepartmentName()));
+        }else {
+            return null;
+        }
+    }
+
+    @Override
+    public String deleteStudent(int id) throws Exception {
+        studentDao.deleteById(id);
+        return "Student Deleted";
     }
 }

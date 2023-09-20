@@ -33,14 +33,16 @@ public class StudentController {
 
     @PostMapping("/save_student")
     public StudentDto saveStudent(@RequestBody StudentDto studentDto) throws Exception {
+        System.out.println("this is studentDto"+studentDto);
         return studentService.AddStudent(studentDto);
     }
     @PutMapping("/update_student")
-    public String updateStudent(){
-        return "updated";
+    public StudentDto updateStudent(@RequestBody StudentDto studentDto) throws Exception {
+        return studentService.updateStudent(studentDto);
     }
-    @DeleteMapping("/delete_student")
-    public String deleteStudent(){
-        return "deleete";
+    @DeleteMapping("/delete_student/{id}")
+    public String deleteStudent(@PathVariable Integer id) throws Exception {
+        return studentService.deleteStudent(id);
     }
 }
+
