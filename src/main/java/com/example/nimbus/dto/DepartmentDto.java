@@ -1,6 +1,4 @@
 package com.example.nimbus.dto;
-
-import jakarta.persistence.Table;
 import lombok.*;
 
 @AllArgsConstructor

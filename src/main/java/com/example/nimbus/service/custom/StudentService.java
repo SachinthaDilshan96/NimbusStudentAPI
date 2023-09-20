@@ -1,8 +1,6 @@
 package com.example.nimbus.service.custom;
-
 import com.example.nimbus.dto.StudentDto;
 import com.example.nimbus.service.SuperService;
-
 import java.util.ArrayList;
 
 public interface StudentService extends SuperService {

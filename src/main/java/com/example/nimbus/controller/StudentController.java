@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/student")
@@ -33,7 +32,6 @@ public class StudentController {
 
     @PostMapping("/save_student")
     public StudentDto saveStudent(@RequestBody StudentDto studentDto) throws Exception {
-        System.out.println("this is studentDto"+studentDto);
         return studentService.AddStudent(studentDto);
     }
     @PutMapping("/update_student")

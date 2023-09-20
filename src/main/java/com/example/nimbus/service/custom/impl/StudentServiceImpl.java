@@ -2,7 +2,6 @@ package com.example.nimbus.service.custom.impl;
 
 import com.example.nimbus.dao.custom.DepartmentDao;
 import com.example.nimbus.dao.custom.StudentDao;
-import com.example.nimbus.dto.DepartmentDto;
 import com.example.nimbus.dto.StudentDto;
 import com.example.nimbus.entities.DepartmentEntity;
 import com.example.nimbus.entities.StudentEntity;
@@ -27,7 +26,6 @@ public class StudentServiceImpl implements StudentService {
         List<StudentEntity> studentEntities = studentDao.findAll();
         ArrayList<StudentDto> studentDtos = new ArrayList<>();
         for (StudentEntity studentEntity:studentEntities){
-            System.out.println(studentEntity);
             studentDtos.add(new StudentDto(
                     studentEntity.getStudentId(),
                     studentEntity.getFirstName(),
@@ -57,13 +55,14 @@ public class StudentServiceImpl implements StudentService {
     public StudentDto AddStudent(StudentDto studentDto) throws Exception {
         Optional<DepartmentEntity> department = departmentDao.findById(studentDto.getDepartmentId());
         if (department.isPresent()){
-            StudentEntity studentEntity = new StudentEntity(
-                    studentDto.getStudentId(),
-                    studentDto.getFirstName(),
-                    studentDto.getLastName(),
-                    studentDto.getBirthDay(),
-                    new DepartmentEntity(studentDto.getDepartmentId(),department.get().getDepartmentName()));
+            StudentEntity studentEntity = new StudentEntity();
+            studentEntity.setFirstName(studentDto.getFirstName());
+            studentEntity.setLastName(studentDto.getLastName());
+            studentEntity.setBirthDay(studentDto.getBirthDay());
+            studentEntity.setDepartment(new DepartmentEntity(studentDto.getDepartmentId(),department.get().getDepartmentName()));
+            System.out.println("this is "+studentEntity);
             StudentEntity result = studentDao.save(studentEntity);
+            System.out.println(result);
             if (result!=null){
                 return new StudentDto(
                         result.getStudentId(),

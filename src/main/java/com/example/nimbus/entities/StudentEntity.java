@@ -2,7 +2,6 @@ package com.example.nimbus.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.context.annotation.Bean;
 
 import java.sql.Date;
 
