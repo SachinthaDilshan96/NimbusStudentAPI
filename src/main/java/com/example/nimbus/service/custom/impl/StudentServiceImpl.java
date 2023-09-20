@@ -1,5 +1,6 @@
 package com.example.nimbus.service.custom.impl;
 
+import com.example.nimbus.dao.custom.DepartmentDao;
 import com.example.nimbus.dao.custom.StudentDao;
 import com.example.nimbus.dto.DepartmentDto;
 import com.example.nimbus.dto.StudentDto;
@@ -19,6 +20,8 @@ import java.util.Optional;
 public class StudentServiceImpl implements StudentService {
     @Autowired
     private StudentDao studentDao;
+    @Autowired
+    private DepartmentDao departmentDao;
     @Override
     public ArrayList<StudentDto> getAllStudent() throws Exception {
         List<StudentEntity> studentEntities = studentDao.findAll();
@@ -30,8 +33,7 @@ public class StudentServiceImpl implements StudentService {
                     studentEntity.getFirstName(),
                     studentEntity.getLastName(),
                     studentEntity.getBirthDay(),
-                    new DepartmentDto(studentEntity.getDepartment().getId(),studentEntity.getDepartment().getDepartmentName())
-            ));
+                    studentEntity.getDepartment().getId()));
         }
         return studentDtos;
     }
@@ -46,48 +48,59 @@ public class StudentServiceImpl implements StudentService {
                     studentEntity.get().getFirstName(),
                     studentEntity.get().getLastName(),
                     studentEntity.get().getBirthDay(),
-                    new DepartmentDto(studentEntity.get().getDepartment().getId(),studentEntity.get().getDepartment().getDepartmentName()));
+                    studentEntity.get().getDepartment().getId());
         }
         return studentDto;
     }
 
     @Override
     public StudentDto AddStudent(StudentDto studentDto) throws Exception {
-        StudentEntity studentEntity = new StudentEntity(
-                studentDto.getStudentId(),
-                studentDto.getFirstName(),
-                studentDto.getLastName(),
-                studentDto.getBirthDay(),
-                new DepartmentEntity(studentDto.getDepartment().getId(),studentDto.getDepartment().getDepartmentName()));
-        StudentEntity result = studentDao.save(studentEntity);
-        if (result!=null){
-            return new StudentDto(
-                    result.getStudentId(),
-                    result.getFirstName(),
-                    result.getLastName(),
-                    result.getBirthDay(),
-                    new DepartmentDto(result.getDepartment().getId(),result.getDepartment().getDepartmentName()));
-        }else {
-            return null;
+        Optional<DepartmentEntity> department = departmentDao.findById(studentDto.getDepartmentId());
+        if (department.isPresent()){
+            StudentEntity studentEntity = new StudentEntity(
+                    studentDto.getStudentId(),
+                    studentDto.getFirstName(),
+                    studentDto.getLastName(),
+                    studentDto.getBirthDay(),
+                    new DepartmentEntity(studentDto.getDepartmentId(),department.get().getDepartmentName()));
+            StudentEntity result = studentDao.save(studentEntity);
+            if (result!=null){
+                return new StudentDto(
+                        result.getStudentId(),
+                        result.getFirstName(),
+                        result.getLastName(),
+                        result.getBirthDay(),
+                        result.getDepartment().getId());
+            }else {
+                return null;
+            }
         }
+        return null;
     }
 
     @Override
     public StudentDto updateStudent(StudentDto studentDto) throws Exception {
-        StudentEntity studentEntity = new StudentEntity(
-                studentDto.getStudentId(),
-                studentDto.getFirstName(),
-                studentDto.getLastName(),
-                studentDto.getBirthDay(),
-                new DepartmentEntity(studentDto.getDepartment().getId(),studentDto.getDepartment().getDepartmentName()));
-        StudentEntity result = studentDao.save(studentEntity);
-        if (result!=null){
-            return new StudentDto(
-                    result.getStudentId(),
-                    result.getFirstName(),
-                    result.getLastName(),
-                    result.getBirthDay(),
-                    new DepartmentDto(result.getDepartment().getId(),result.getDepartment().getDepartmentName()));
+        Optional<StudentEntity> studentEntity = studentDao.findById(studentDto.getStudentId());
+        if (studentEntity.isPresent()){
+            DepartmentEntity departmentEntityToBeSaved = new DepartmentEntity(studentEntity.get().getDepartment().getId(),studentEntity.get().getDepartment().getDepartmentName());
+            StudentEntity studentEntityToBeSaved = new StudentEntity(
+                    studentDto.getStudentId(),
+                    studentDto.getFirstName(),
+                    studentDto.getLastName(),
+                    studentDto.getBirthDay(),
+                    departmentEntityToBeSaved);
+
+            StudentEntity result = studentDao.save(studentEntityToBeSaved);
+            if (result!=null){
+                return new StudentDto(
+                        result.getStudentId(),
+                        result.getFirstName(),
+                        result.getLastName(),
+                        result.getBirthDay(),
+                        result.getDepartment().getId());
+            }else {
+                return null;
+            }
         }else {
             return null;
         }
