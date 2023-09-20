@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/student")
@@ -15,10 +16,21 @@ public class StudentController {
     private StudentService studentService;
 
     @GetMapping("/get_student/{id}")
-    public String getStudent(@PathVariable Integer id) throws Exception {
+    public StudentDto getStudent(@PathVariable Integer id) throws Exception {
         StudentDto studentDto = studentService.getStudentById(id);
-        return studentDto.toString();
+        if (studentDto!=null)
+            return studentDto;
+        else return null;
     }
+
+    @GetMapping("/get_all_students")
+    public ArrayList<StudentDto> getAllStudents() throws Exception {
+        ArrayList<StudentDto> students = studentService.getAllStudent();
+        if (students.size()>0)
+            return students;
+        else return null;
+    }
+
     @PostMapping("/save_student")
     public StudentDto saveStudent(@RequestBody StudentDto studentDto) throws Exception {
         return studentService.AddStudent(studentDto);
