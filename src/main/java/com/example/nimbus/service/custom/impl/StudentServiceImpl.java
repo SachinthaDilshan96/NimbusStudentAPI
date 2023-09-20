@@ -81,8 +81,9 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public StudentDto updateStudent(StudentDto studentDto) throws Exception {
         Optional<StudentEntity> studentEntity = studentDao.findById(studentDto.getStudentId());
-        if (studentEntity.isPresent()){
-            DepartmentEntity departmentEntityToBeSaved = new DepartmentEntity(studentEntity.get().getDepartment().getId(),studentEntity.get().getDepartment().getDepartmentName());
+        Optional<DepartmentEntity> departmentEntity = departmentDao.findById(studentDto.getDepartmentId());
+        if (studentEntity.isPresent() & departmentEntity.isPresent()){
+            DepartmentEntity departmentEntityToBeSaved = new DepartmentEntity(departmentEntity.get().getId(),departmentEntity.get().getDepartmentName());
             StudentEntity studentEntityToBeSaved = new StudentEntity(
                     studentDto.getStudentId(),
                     studentDto.getFirstName(),
