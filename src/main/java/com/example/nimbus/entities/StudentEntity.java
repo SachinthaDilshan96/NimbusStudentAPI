@@ -23,7 +23,7 @@ public class StudentEntity {
     private String lastName;
     @Column(name = "birthday")
     private Date birthDay;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "department_id")
     private DepartmentEntity department;
 }

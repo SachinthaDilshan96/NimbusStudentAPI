@@ -6,11 +6,13 @@ import com.example.nimbus.dto.StudentDto;
 import com.example.nimbus.entities.DepartmentEntity;
 import com.example.nimbus.service.custom.DepartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class DepartmentServiceImpl implements DepartmentService {
 
     @Autowired

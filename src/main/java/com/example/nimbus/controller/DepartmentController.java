@@ -11,7 +11,7 @@ import java.util.ArrayList;
 @RequestMapping("api/v1/department")
 @CrossOrigin
 public class DepartmentController {
-    //@Autowired
+    @Autowired
     private DepartmentService departmentService;
 
     @GetMapping("/get_department/{id}")

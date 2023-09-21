@@ -60,9 +60,7 @@ public class StudentServiceImpl implements StudentService {
             studentEntity.setLastName(studentDto.getLastName());
             studentEntity.setBirthDay(studentDto.getBirthDay());
             studentEntity.setDepartment(new DepartmentEntity(studentDto.getDepartmentId(),department.get().getDepartmentName()));
-            System.out.println("this is "+studentEntity);
             StudentEntity result = studentDao.save(studentEntity);
-            System.out.println(result);
             if (result!=null){
                 return new StudentDto(
                         result.getStudentId(),

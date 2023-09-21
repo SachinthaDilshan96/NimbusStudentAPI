@@ -1,12 +1,10 @@
 package com.example.nimbus.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
-@AllArgsConstructor
+import java.util.List;
+
 @NoArgsConstructor
 @Getter
 @Setter
@@ -16,7 +14,15 @@ import lombok.*;
 public class DepartmentEntity {
     @Id
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @Column(name = "department_name")
     private String departmentName;
+    @OneToMany(mappedBy = "department",targetEntity = StudentEntity.class)
+    private List<StudentEntity> studentEntities;
+
+    public DepartmentEntity(int id, String departmentName) {
+        this.id = id;
+        this.departmentName = departmentName;
+    }
 }
