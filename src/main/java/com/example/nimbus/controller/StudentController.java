@@ -2,6 +2,8 @@ package com.example.nimbus.controller;
 import com.example.nimbus.dto.StudentDto;
 import com.example.nimbus.service.custom.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -15,32 +17,40 @@ public class StudentController {
     private StudentService studentService;
 
     @GetMapping("/get_student/{id}")
-    public StudentDto getStudent(@PathVariable Integer id) throws Exception {
+    public ResponseEntity<StudentDto> getStudent(@PathVariable Integer id) throws Exception {
         StudentDto studentDto = studentService.getStudentById(id);
         if (studentDto!=null)
-            return studentDto;
-        else return null;
+            return new ResponseEntity<>(studentDto, HttpStatus.OK);
+        else return new ResponseEntity<>( null, HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("/get_all_students")
-    public ArrayList<StudentDto> getAllStudents() throws Exception {
+    public ResponseEntity<ArrayList<StudentDto>> getAllStudents() throws Exception {
         ArrayList<StudentDto> students = studentService.getAllStudent();
         if (students.size()>0)
-            return students;
-        else return null;
+            return new ResponseEntity<>(students,HttpStatus.OK);
+        else return new ResponseEntity<>(null,HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/save_student")
-    public StudentDto saveStudent(@RequestBody StudentDto studentDto) throws Exception {
-        return studentService.AddStudent(studentDto);
+    public ResponseEntity<StudentDto> saveStudent(@RequestBody StudentDto studentDto) throws Exception {
+        StudentDto studentResult = studentService.AddStudent(studentDto);
+        if (studentResult!=null)
+            return new ResponseEntity<>(studentResult,HttpStatus.OK);
+        else
+            return new ResponseEntity<>(studentResult,HttpStatus.NO_CONTENT);
     }
     @PutMapping("/update_student")
-    public StudentDto updateStudent(@RequestBody StudentDto studentDto) throws Exception {
-        return studentService.updateStudent(studentDto);
+    public ResponseEntity<StudentDto> updateStudent(@RequestBody StudentDto studentDto) throws Exception {
+        StudentDto studentResult = studentService.updateStudent(studentDto);
+        if (studentResult!=null)
+            return new ResponseEntity<>(studentResult,HttpStatus.OK);
+        else
+            return new ResponseEntity<>(studentResult,HttpStatus.NO_CONTENT);
     }
     @DeleteMapping("/delete_student/{id}")
-    public String deleteStudent(@PathVariable Integer id) throws Exception {
-        return studentService.deleteStudent(id);
+    public ResponseEntity<String> deleteStudent(@PathVariable Integer id) throws Exception {
+        return new ResponseEntity<>(studentService.deleteStudent(id),HttpStatus.OK);
     }
 }
 
