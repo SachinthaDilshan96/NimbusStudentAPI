@@ -25,4 +25,5 @@ public class StudentMapperTest {
         StudentEntity student = StudentMapper.studentMapper.toStudentEntity(studentRequestDto);
         Assertions.assertNotNull(student,"StudentEntity is not null");
     }
+
 }
