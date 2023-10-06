@@ -2,7 +2,6 @@ package com.example.nimbus.service.custom.impl;
 
 import com.example.nimbus.dao.custom.DepartmentDao;
 import com.example.nimbus.dto.DepartmentDto;
-import com.example.nimbus.dto.StudentDto;
 import com.example.nimbus.entities.DepartmentEntity;
 import com.example.nimbus.service.custom.DepartmentService;
 import org.springframework.beans.factory.annotation.Autowired;

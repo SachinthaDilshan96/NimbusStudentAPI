@@ -2,15 +2,19 @@ package com.example.nimbus.service.custom.impl;
 
 import com.example.nimbus.dao.custom.DepartmentDao;
 import com.example.nimbus.dao.custom.StudentDao;
-import com.example.nimbus.dto.StudentDto;
+import com.example.nimbus.dto.request.StudentRequestDto;
+import com.example.nimbus.dto.response.StudentResponseDto;
 import com.example.nimbus.entities.DepartmentEntity;
 import com.example.nimbus.entities.StudentEntity;
+import com.example.nimbus.exceptions.EntryNotFoundException;
+import com.example.nimbus.exceptions.EntrySavingFailedException;
+import com.example.nimbus.exceptions.EntryUpdationFailedException;
 import com.example.nimbus.service.custom.StudentService;
+import com.example.nimbus.util.mapper.StudentMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,37 +26,24 @@ public class StudentServiceImpl implements StudentService {
     @Autowired
     private DepartmentDao departmentDao;
     @Override
-    public ArrayList<StudentDto> getAllStudent() throws Exception {
+    public List<StudentResponseDto> getAllStudent() throws Exception {
         List<StudentEntity> studentEntities = studentDao.findAll();
-        ArrayList<StudentDto> studentDtos = new ArrayList<>();
-        for (StudentEntity studentEntity:studentEntities){
-            studentDtos.add(new StudentDto(
-                    studentEntity.getStudentId(),
-                    studentEntity.getFirstName(),
-                    studentEntity.getLastName(),
-                    studentEntity.getBirthDay(),
-                    studentEntity.getDepartment().getId()));
-        }
-        return studentDtos;
+        return StudentMapper.studentMapper.toStudentResponseDtos(studentEntities);
     }
 
     @Override
-    public StudentDto getStudentById(int id) throws Exception {
+    public StudentResponseDto getStudentById(int id) throws Exception {
         Optional<StudentEntity> studentEntity = studentDao.findById(id);
-        StudentDto studentDto = null;
+        StudentResponseDto studentDto = null;
         if (studentEntity.isPresent()){
-            studentDto = new StudentDto(
-                    studentEntity.get().getStudentId(),
-                    studentEntity.get().getFirstName(),
-                    studentEntity.get().getLastName(),
-                    studentEntity.get().getBirthDay(),
-                    studentEntity.get().getDepartment().getId());
+            return StudentMapper.studentMapper.toStudentResponseDto(studentEntity.get());
+        }else{
+            throw new EntryNotFoundException("Doctor not found");
         }
-        return studentDto;
     }
 
     @Override
-    public StudentDto AddStudent(StudentDto studentDto) throws Exception {
+    public StudentResponseDto AddStudent(StudentRequestDto studentDto) throws Exception {
         Optional<DepartmentEntity> department = departmentDao.findById(studentDto.getDepartmentId());
         if (department.isPresent()){
             StudentEntity studentEntity = new StudentEntity();
@@ -62,27 +53,22 @@ public class StudentServiceImpl implements StudentService {
             studentEntity.setDepartment(new DepartmentEntity(studentDto.getDepartmentId(),department.get().getDepartmentName()));
             StudentEntity result = studentDao.save(studentEntity);
             if (result!=null){
-                return new StudentDto(
-                        result.getStudentId(),
-                        result.getFirstName(),
-                        result.getLastName(),
-                        result.getBirthDay(),
-                        result.getDepartment().getId());
+                return StudentMapper.studentMapper.toStudentResponseDto(result);
             }else {
-                return null;
+                throw new EntrySavingFailedException("Entry Saving Failed");
             }
         }
         return null;
     }
 
     @Override
-    public StudentDto updateStudent(StudentDto studentDto) throws Exception {
-        Optional<StudentEntity> studentEntity = studentDao.findById(studentDto.getStudentId());
+    public StudentResponseDto updateStudent(int id,StudentRequestDto studentDto) throws Exception {
+        Optional<StudentEntity> studentEntity = studentDao.findById(id);
         Optional<DepartmentEntity> departmentEntity = departmentDao.findById(studentDto.getDepartmentId());
         if (studentEntity.isPresent() & departmentEntity.isPresent()){
             DepartmentEntity departmentEntityToBeSaved = new DepartmentEntity(departmentEntity.get().getId(),departmentEntity.get().getDepartmentName());
             StudentEntity studentEntityToBeSaved = new StudentEntity(
-                    studentDto.getStudentId(),
+                    id,
                     studentDto.getFirstName(),
                     studentDto.getLastName(),
                     studentDto.getBirthDay(),
@@ -90,14 +76,9 @@ public class StudentServiceImpl implements StudentService {
 
             StudentEntity result = studentDao.save(studentEntityToBeSaved);
             if (result!=null){
-                return new StudentDto(
-                        result.getStudentId(),
-                        result.getFirstName(),
-                        result.getLastName(),
-                        result.getBirthDay(),
-                        result.getDepartment().getId());
+                return StudentMapper.studentMapper.toStudentResponseDto(result);
             }else {
-                return null;
+                throw new EntryUpdationFailedException("Student Update Failed");
             }
         }else {
             return null;
